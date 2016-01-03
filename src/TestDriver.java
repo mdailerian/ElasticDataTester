@@ -9,6 +9,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 //import org.elasticsearch.index.mapper.object.ObjectMapper;
 //import org.elasticsearch.node.Node;
 //import org.elasticsearch.node.NodeBuilder;
@@ -31,16 +32,10 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 public class TestDriver {
 
-    public IndexResponse indexDocument( Client client) throws IOException{
+    public IndexResponse indexDocument( Client client, XContentBuilder doc) throws IOException{
         // create an index, stick some data
             IndexResponse response = client.prepareIndex("dailema2", "test" )
-                    .setSource(jsonBuilder()
-                                    .startObject()
-                                    .field("user", "jenga")
-                                    .field("postDate", new Date())
-                                    .field("message", "Document7")
-                                    .endObject()
-                    )
+                    .setSource( doc )
                     .execute()
                     .actionGet();
 
@@ -53,17 +48,20 @@ public class TestDriver {
         try {
             client = TransportClient.builder().build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-//                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("host2"), 9300));
-
 
             System.out.println( "Client " + client.toString());
 
-            //JsonParser parser = new JsonFactory()
-            //        .createParser(new File("C:\\Users\\MMAA-local\\Desktop\\Marti dev\\moviedata.json"));
-//            System.out.println( "JSON File " + parser );
+
+            XContentBuilder doc = jsonBuilder()
+                        .startObject()
+                        .field("job", "driver")
+                        .field("message", "Be smart")
+                        .endObject();
+            System.out.println( doc );
 
             TestDriver td = new TestDriver();
-            response = td.indexDocument( client );
+            IndexResponse response = td.indexDocument(client, doc );
+            System.out.println(" Response : " + response );
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -75,3 +73,7 @@ public class TestDriver {
         client.close();
     }
 }
+
+//JsonParser parser = new JsonFactory()
+//        .createParser(new File("C:\\Users\\MMAA-local\\Desktop\\Marti dev\\moviedata.json"));
+//            System.out.println( "JSON File " + parser );
