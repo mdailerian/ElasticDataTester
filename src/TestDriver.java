@@ -51,7 +51,10 @@ public class TestDriver {
     public static void searchDocument(Client client, String index, String type,
                                       String field, String value){
 
-        SearchResponse response = client.prepareSearch(index)
+       // http://stackoverflow.com/questions/14297329/elasticsearch-full-text-search-using-java-api
+       // https://github.com/hakdogan/ElasticSearch/blob/master/src/main/java/com/kodcu/main/JavaAPIMain.java
+       // http://en.kodcu.com/2013/09/elasticsearch-java-api-2/   very good search examples
+       SearchResponse response = client.prepareSearch(index)
                 .setTypes(type)
                 .setSearchType(SearchType.QUERY_AND_FETCH)
                 .setQuery(termQuery(field, value))//fieldQuery(field, value))
